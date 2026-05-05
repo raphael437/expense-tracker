@@ -10,7 +10,15 @@ import { clerkWebhook } from './controllers/clerk.controller';
 import expenseRouter from './routes/expense.route';
 import transctionsRouter from './routes/transction.route';
 const app = express();
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(
+  cors({
+    origin: [
+      'http://localhost:3000',
+      'https://expense-tracker-frontend1-eta.vercel.app',
+    ],
+    credentials: true,
+  })
+);
 app.post(
   '/api/clerk/webhooks/register',
   express.raw({ type: 'application/json' }),
