@@ -1,0 +1,12 @@
+#npm
+node_modules
+npm-shrinkwrap.json
+*.log
+*.gz
+#coveralls
+.nyc_output
+coverage
+#benchmarking
+benchmarks/graphs
+.env
+.Ds_Store
