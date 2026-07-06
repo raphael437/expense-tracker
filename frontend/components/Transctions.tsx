@@ -43,6 +43,7 @@ export default function Transctions() {
   const [seriesData, setSeriesData] = useState<IChartSeriesPoint[]>([]);
   const [transctionList, setTransctionList] = useState<ITransactionData[]>([]);
   const [chartType, setChartType] = useState<ChartTypes>('column');
+
   const handleAddTransction = async (transctionObj: ITransactionData) => {
     try {
       const token = await getToken();
@@ -59,6 +60,7 @@ export default function Transctions() {
       toast.error('Error while adding transctions');
     }
   };
+
   const handleUpdateTransction = async (transctionObj: ITransactionData) => {
     try {
       const token = await getToken();
@@ -76,6 +78,7 @@ export default function Transctions() {
       console.log(error);
     }
   };
+
   const handleFetchUserTransactions = async () => {
     try {
       setLoading(true);
@@ -93,6 +96,7 @@ export default function Transctions() {
       console.log(error);
     }
   };
+
   const handleDeleteTransaction = async (transction: ITransactionData) => {
     try {
       const token = await getToken();
@@ -109,6 +113,7 @@ export default function Transctions() {
       toast.error('Error while deleting the transction');
     }
   };
+
   const handleChartType = async () => {
     if (chartType === 'line') {
       setChartType('column');
@@ -116,16 +121,20 @@ export default function Transctions() {
       setChartType('line');
     }
   };
+
   useEffect(() => {
     handleFetchUserTransactions();
   }, []);
+
   const options: Highcharts.Options = useMemo(() => {
     return getChartOptions(categories, seriesData, chartType);
   }, [categories, seriesData, chartType]);
+
   return (
-    <div className="ml-8 mr-8 mt-6 w-[75%]">
-      <div className="w-full flex justify-between">
-        <h1 className="text-xl font-medium">Transactions</h1>;
+    <div className="w-full px-4 sm:px-6 lg:ml-8 lg:mt-6 lg:mb-8 lg:w-[75%]">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row w-full justify-between items-start sm:items-center gap-3 sm:gap-0">
+        <h1 className="text-xl font-medium">Transactions</h1>
         <TransactionModal
           onAddTransction={handleAddTransction}
           onUpdateTransction={handleUpdateTransction}
@@ -138,101 +147,125 @@ export default function Transctions() {
           showTransctionType={true}
         />
       </div>
+
+      {/* Chart Section */}
       {transctionList?.length ? (
-        <div className="border border-gray-300 mt-4 py-3 px-6 rounded-3xl flex-1">
-          <div className="flex justify-between items-center">
+        <div className="border border-gray-300 mt-4 py-3 px-4 sm:px-6 rounded-3xl flex-1">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
               <div className="font-medium text-lg">Transaction Overview</div>
-              <div>
+              <div className="text-sm text-gray-500">
                 Monitor your transaction over time and gain insights into your
                 income and expense.
               </div>
             </div>
-            <Button className="cursor-pointer" onClick={handleChartType}>
+            <Button className="cursor-pointer w-full sm:w-auto" onClick={handleChartType}>
               {chartType === 'line' ? 'Line' : 'Column'}
             </Button>
           </div>
-          <div className="mt-8">
+          <div className="mt-4 sm:mt-8">
             <HighchartsReact options={options} highcharts={Highcharts} />
           </div>
         </div>
       ) : null}
+
+      {/* Transactions Table */}
       {transctionList?.length ? (
-        <div className="mt-4 px-3 x-6 border-gray-300 rounded-3xl h-[332px] overflow-y-scroll no-scrollbar">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Icon</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Edit</TableHead>
-                <TableHead>Delete</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {transctionList.map(
-                (transaction: ITransactionData, index: number) => {
-                  return (
-                    <TableRow key={index}>
-                      <TableCell className="text-2xl">
-                        {transaction.emoji}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {transaction.title}
-                      </TableCell>
-                      <TableCell>{transaction.transactionType}</TableCell>
-                      <TableCell>{transaction.category}</TableCell>
-                      <TableCell>
-                        {transaction.date
-                          ? new Date(transaction?.date).toLocaleDateString()
-                          : ''}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center">
-                          {transaction.transactionType === 'income' ? (
-                            <TrendingUp className="w-4 h-4 text-green-500 font-bold" />
-                          ) : (
-                            <TrendingDown className="w-4 h-4 text-red-500 font-bold" />
-                          )}
+        <div className="mt-4 border border-gray-300 rounded-3xl overflow-hidden">
+          <div className="overflow-x-auto no-scrollbar px-3 py-4 sm:px-6 sm:py-6">
+            <Table className="min-w-[700px] md:min-w-full">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-xs sm:text-sm">Icon</TableHead>
+                  <TableHead className="text-xs sm:text-sm">Title</TableHead>
+                  <TableHead className="text-xs sm:text-sm hidden sm:table-cell">Type</TableHead>
+                  <TableHead className="text-xs sm:text-sm hidden md:table-cell">Category</TableHead>
+                  <TableHead className="text-xs sm:text-sm hidden lg:table-cell">Date</TableHead>
+                  <TableHead className="text-xs sm:text-sm">Amount</TableHead>
+                  <TableHead className="text-xs sm:text-sm">Edit</TableHead>
+                  <TableHead className="text-xs sm:text-sm">Delete</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {transctionList.map(
+                  (transaction: ITransactionData, index: number) => {
+                    return (
+                      <TableRow key={index}>
+                        <TableCell className="text-xl sm:text-2xl">
+                          {transaction.emoji}
+                        </TableCell>
+                        <TableCell className="font-medium text-sm sm:text-base">
+                          {transaction.title}
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell text-sm">
                           <span
-                            className={`ml-2 ${transaction.transactionType === 'income' ? 'text-green-500' : 'text-red-500'}`}
+                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                              transaction.transactionType === 'income'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-red-100 text-red-700'
+                            }`}
                           >
-                            {transaction.amount}
+                            {transaction.transactionType}
                           </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <SquarePen
-                          className="w-5 h-5 text-gray-500 cursor-pointer"
-                          onClick={() => {
-                            setIsEditmode(true);
-                            setShowTransctionModal(true);
-                            setTransctionObj(transaction);
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Trash2
-                          className="w-5 h-5 text-red-500 cursor-pointer"
-                          onClick={() => handleDeleteTransaction(transaction)}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  );
-                },
-              )}
-            </TableBody>
-          </Table>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell text-sm">
+                          {transaction.category}
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell text-sm">
+                          {transaction.date
+                            ? new Date(transaction.date).toLocaleDateString()
+                            : ''}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            {transaction.transactionType === 'income' ? (
+                              <TrendingUp className="w-4 h-4 text-green-500" />
+                            ) : (
+                              <TrendingDown className="w-4 h-4 text-red-500" />
+                            )}
+                            <span
+                              className={`ml-1 text-sm sm:text-base ${
+                                transaction.transactionType === 'income'
+                                  ? 'text-green-500'
+                                  : 'text-red-500'
+                              }`}
+                            >
+                              {transaction.amount}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <SquarePen
+                            className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-700 transition-colors"
+                            onClick={() => {
+                              setIsEditmode(true);
+                              setShowTransctionModal(true);
+                              setTransctionObj(transaction);
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Trash2
+                            className="w-5 h-5 text-red-500 cursor-pointer hover:text-red-700 transition-colors"
+                            onClick={() => handleDeleteTransaction(transaction)}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  },
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       ) : loading ? (
-        <div className='h-full flex items-center justify-center'>
-          <Spinner className='w-10 h-10 '/>
+        <div className="h-64 flex items-center justify-center">
+          <Spinner className="w-10 h-10" />
         </div>
       ) : (
-        <div className='flex items-center justify-center w-full h-full text-gray-500 font-medium'>click the &quot;Add Transction&quot; buttun to add transctions</div>
+        <div className="h-64 flex items-center justify-center w-full text-gray-500 font-medium">
+          Click the &quot;Add Transaction&quot; button to add transactions
+        </div>
       )}
     </div>
   );
