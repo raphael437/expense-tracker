@@ -36,7 +36,6 @@ import { toast } from 'sonner';
 export default function TransactionModal({
   onAddTransction,
   onUpdateTransction,
-
   showTransctionModal,
   setShowTransctionModal,
   transctionObj,
@@ -47,7 +46,6 @@ export default function TransactionModal({
 }: {
   onAddTransction: (transctionData: ITransactionData) => void;
   onUpdateTransction: (transctionData: ITransactionData) => void;
-
   showTransctionModal: boolean;
   setShowTransctionModal: (value: boolean) => void;
   transctionObj: ITransactionData | null;
@@ -68,10 +66,12 @@ export default function TransactionModal({
   const [transactionType, setTransactionType] = useState(
     transctionObj?.transactionType || '',
   );
+
   const handleEmojiSelect = (emojiObj: IEmojiObject) => {
     setSelectedEmoji(emojiObj.emoji);
     setShowEmojiPicker(false);
   };
+
   const handleAddTransction = () => {
     const transctionData: ITransactionData = {
       emoji: selectedEmoji,
@@ -94,22 +94,25 @@ export default function TransactionModal({
     setShowTransctionModal(false);
     console.log('income');
   };
+
   const handleResetForm = () => {
     setSelectedEmoji('🚀');
     setTitle('');
     setCategory('');
     setAmount('');
     setDate(null);
+    setTransactionType('');
   };
+
   const handleOpenChange = () => {
     setShowTransctionModal(!showTransctionModal);
     if (!showTransctionModal) {
       handleResetForm();
     }
   };
+
   useEffect(() => {
     if (transctionObj) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedEmoji(transctionObj.emoji);
       setTitle(transctionObj.title);
       setCategory(transctionObj.category);
@@ -125,43 +128,51 @@ export default function TransactionModal({
       : type === 'transction'
         ? 'Add transction'
         : 'Add expense';
+
   const TRANSACTIONS_CATEGORY =
     type === 'income' || transactionType === 'income'
       ? INCOME_CATEGORY_CONSTANTS
       : EXPENSE_CATEGORY_CONSTANTS;
+
   const footerBtnTitle =
     type === 'income'
       ? 'Income'
       : type === 'transction'
         ? 'transction'
         : 'Expense';
+
   return (
     <Dialog open={showTransctionModal} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className=" cursor-pointer p-2">{modalTitle}</Button>
+        <Button className="cursor-pointer p-2 w-full sm:w-auto">
+          {modalTitle}
+        </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="w-[95vw] max-w-md sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle>{modalTitle}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-lg sm:text-xl">{modalTitle}</DialogTitle>
+          <DialogDescription className="text-sm sm:text-base">
             {modalTitle} to the list in just a few simple steps
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col items-start justify-center gap-4">
-          <div className="relative">
+        <div className="flex flex-col items-start justify-center gap-4 mt-2">
+          {/* Emoji Picker */}
+          <div className="relative w-full">
             <span
-              className="text-4xl border border-gray-300 rounded-md cursor-pointer py-1 px-2"
+              className="text-4xl border border-gray-300 rounded-md cursor-pointer py-1 px-2 inline-block"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
             >
               {selectedEmoji}
             </span>
-            {showEmojiPicker ? (
-              <div className="absolute top-0 left-15">
+            {showEmojiPicker && (
+              <div className="absolute z-50 mt-2 left-0 sm:left-auto sm:right-0 md:left-0">
                 <EmojiPicker onEmojiClick={handleEmojiSelect} />
               </div>
-            ) : null}
+            )}
           </div>
-          {showTransctionType ? (
+
+          {/* Transaction Type (optional) */}
+          {showTransctionType && (
             <div className="w-full">
               <span className="font-medium">Transactions</span>
               <Select
@@ -188,9 +199,9 @@ export default function TransactionModal({
                 </SelectContent>
               </Select>
             </div>
-          ) : (
-            ''
           )}
+
+          {/* Title */}
           <div className="w-full">
             <span className="font-medium">Title</span>
             <Input
@@ -206,6 +217,8 @@ export default function TransactionModal({
               onChange={e => setTitle(e.target.value)}
             />
           </div>
+
+          {/* Category */}
           <div className="w-full">
             <span className="font-medium">Category</span>
             <Select
@@ -231,6 +244,8 @@ export default function TransactionModal({
               </SelectContent>
             </Select>
           </div>
+
+          {/* Amount */}
           <div className="w-full">
             <span className="font-medium">Amount</span>
             <Input
@@ -242,13 +257,14 @@ export default function TransactionModal({
             />
           </div>
 
+          {/* Date */}
           <div className="w-full">
             <span className="font-medium">Date</span>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild className="cursor-pointer">
-                <Button variant="outline" className="flex justify-between">
+                <Button variant="outline" className="flex justify-between w-full">
                   {date ? new Date(date).toLocaleDateString() : 'Select Date'}{' '}
-                  <ChevronDownIcon />
+                  <ChevronDownIcon className="h-4 w-4" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0 overflow-hidden">
@@ -265,11 +281,14 @@ export default function TransactionModal({
             </Popover>
           </div>
         </div>
-        <DialogFooter>
+
+        <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-0 mt-4">
           <DialogClose asChild>
-            <Button variant="outline">close</Button>
+            <Button variant="outline" className="w-full sm:w-auto">
+              Close
+            </Button>
           </DialogClose>
-          <Button className="cursor-pointer" onClick={handleAddTransction}>
+          <Button className="cursor-pointer w-full sm:w-auto" onClick={handleAddTransction}>
             {isEditMode ? `Update ${footerBtnTitle}` : `Add ${footerBtnTitle}`}
           </Button>
         </DialogFooter>
