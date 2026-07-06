@@ -1,10 +1,20 @@
-import { ICardProps } from "@/utils/types"
-import Image from "next/image"
+import { ICardProps } from "@/utils/types";
+import Image from "next/image";
 
-export default function Card({title,imgSrc,value}:ICardProps){
-    return <div key={title} className="flex flex-col gap-2 border border-gray-300 rounded-3xl p-4 w-[16.2rem] shadow">
-        <Image src={imgSrc} alt='card-img' width={40} height={40}></Image>
-        <span className="text-xl font-medium mt-1">{title}</span>
-        <span className="font-semibold text-2xl">{value}</span>
+export default function Card({ title, imgSrc, value }: ICardProps) {
+  return (
+    <div className="w-full rounded-3xl border border-gray-300 p-5 shadow bg-white">
+      <Image
+        src={imgSrc}
+        alt={title}
+        width={42}
+        height={42}
+        className="mb-3"
+      />
+
+      <h2 className="text-lg font-medium">{title}</h2>
+
+      <p className="mt-2 text-3xl font-bold">{value}</p>
     </div>
+  );
 }
